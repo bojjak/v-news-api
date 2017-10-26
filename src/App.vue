@@ -43,7 +43,6 @@
 
           <p class="help is-dark" v-if="selectedSource === false">This input is invalid</p>
 
-          <button class="button is-primary is-inverted" @click="getArticleList">Submit</button>
         </div>
       </div>
     </section>
@@ -53,14 +52,16 @@
     <main class="section">
 
       <div class="container">
-        <div class="columns is-centered">
-          <p>Order by: </p>
-          <div class="control">
-            <!-- <label class="radio" v-for="ordering in wholeSource.sortBysAvailable">
-              <input type="radio" name="orderBy" :value="ordering" v-model="selectedOrder">
-              {{ ordering }}
-            </label> -->   
-            <!-- TODO !!!!! -->
+        <div class="columns is-centered has-text-centered" v-if="wholeSource !== undefined">
+          <div v-if="wholeSource.sortBysAvailable.length > 1">
+            <p>Order by: </p>
+            <div class="control">
+              <label class="radio" v-for="ordering in wholeSource.sortBysAvailable">
+                <input type="radio" name="orderBy" :value="ordering" v-model="selectedOrder">
+                {{ ordering }}
+              </label>   
+              <!-- TODO !!!!! -->
+            </div>
           </div>
         </div>
 
@@ -109,8 +110,9 @@ export default {
       this.getSourceList()
     },
     selectedSource (to, from) {
-      this.getArticleList()
       this.getSourceObject()
+      this.getArticleList()
+      this.selectedOrder = this.wholeSource.sortBysAvailable[0]
     },
     selectedOrder (to, from) {
       this.getArticleList()
@@ -135,9 +137,6 @@ export default {
         { value: 'de', text: 'German' },
         { value: 'fr', text: 'French' }
       ],
-      orders: ['top',
-        'popular',
-        'latest'],
       sourceList: [],
       articleList: [],
       selectedCategory: '',
@@ -184,6 +183,7 @@ export default {
         responseType: 'stream'
       })
         .then(response => {
+          console.log(response)
           this.articleList = response.data.articles
         })
     },
